@@ -18,6 +18,7 @@ type Node struct {
 	Edges     EdgeMetadatas `json:"edges,omitempty"`
 	Controls  NodeControls  `json:"controls,omitempty"`
 	Latest    LatestMap     `json:"latest,omitempty"`
+	Const     ConstMap      `json:"const,omitempty"`
 	Metrics   Metrics       `json:"metrics,omitempty"`
 	Parents   Sets          `json:"parents,omitempty"`
 	Children  NodeSet       `json:"children,omitempty"`
@@ -32,6 +33,7 @@ func MakeNode(id string) Node {
 		Adjacency: EmptyIDList,
 		Edges:     EmptyEdgeMetadatas,
 		Controls:  MakeNodeControls(),
+		Const:     EmptyConstMap,
 		Latest:    EmptyLatestMap,
 		Metrics:   Metrics{},
 		Parents:   EmptySets,
@@ -86,6 +88,23 @@ func (n Node) WithLatests(m map[string]string) Node {
 func (n Node) WithLatest(k string, ts time.Time, v string) Node {
 	result := n.Copy()
 	result.Latest = result.Latest.Set(k, ts, v)
+	return result
+}
+
+// WithLatests returns a fresh copy of n, with Metadata m merged in.
+func (n Node) WithConsts(m map[string]string) Node {
+	result := n.Copy()
+	ts := mtime.Now()
+	for k, v := range m {
+		result.Const = result.Const.Set(k, ts, v)
+	}
+	return result
+}
+
+// WithLatest produces a new Node with k mapped to v in the Const metadata.
+func (n Node) WithConst(k string, ts time.Time, v string) Node {
+	result := n.Copy()
+	result.Const = result.Const.Set(k, ts, v)
 	return result
 }
 
@@ -185,6 +204,7 @@ func (n Node) Copy() Node {
 	cp.Edges = n.Edges.Copy()
 	cp.Controls = n.Controls.Copy()
 	cp.Latest = n.Latest.Copy()
+	cp.Const = n.Const.Copy()
 	cp.Metrics = n.Metrics.Copy()
 	cp.Parents = n.Parents.Copy()
 	cp.Children = n.Children.Copy()
@@ -213,6 +233,7 @@ func (n Node) Merge(other Node) Node {
 		Edges:     n.Edges.Merge(other.Edges),
 		Controls:  n.Controls.Merge(other.Controls),
 		Latest:    n.Latest.Merge(other.Latest),
+		Const:     n.Const.Merge(other.Const),
 		Metrics:   n.Metrics.Merge(other.Metrics),
 		Parents:   n.Parents.Merge(other.Parents),
 		Children:  n.Children.Merge(other.Children),
