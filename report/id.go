@@ -201,6 +201,13 @@ func ExtractHostID(m Node) string {
 	return hostID
 }
 
+// ExtractHostIDFromConst extracts the host id from ConstMap in Node
+func ExtractHostIDFromConst(m Node) string {
+	hostNodeID, _ := m.Const.Lookup(HostNodeID)
+	hostID, _, _ := ParseNodeID(hostNodeID)
+	return hostID
+}
+
 func isLoopback(address string) bool {
 	ip := net.ParseIP(address)
 	return ip != nil && ip.IsLoopback()
