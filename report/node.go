@@ -45,7 +45,7 @@ func MakeNodeWith(id string, m map[string]string) Node {
 	return MakeNode(id).WithLatests(m)
 }
 
-// MakeNodeWith creates a new Node with the supplied const map.
+// MakeNodeWithConsts creates a new Node with the supplied const map.
 func MakeNodeWithConsts(id string, m map[string]string) Node {
 	return MakeNode(id).WithConsts(m)
 }
@@ -96,7 +96,7 @@ func (n Node) WithLatest(k string, ts time.Time, v string) Node {
 	return result
 }
 
-// WithLatests returns a fresh copy of n, with Metadata m merged in.
+// WithConsts returns a fresh copy of n, with Metadata m merged in.
 func (n Node) WithConsts(m map[string]string) Node {
 	result := n.Copy()
 	ts := mtime.Now()
@@ -106,7 +106,7 @@ func (n Node) WithConsts(m map[string]string) Node {
 	return result
 }
 
-// WithLatest produces a new Node with k mapped to v in the Const metadata.
+// WithConst produces a new Node with k mapped to v in the Const metadata.
 func (n Node) WithConst(k string, ts time.Time, v string) Node {
 	result := n.Copy()
 	result.Const = result.Const.Set(k, ts, v)
